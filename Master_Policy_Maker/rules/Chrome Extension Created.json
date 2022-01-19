@@ -1,0 +1,47 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Informational",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "Methodology"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a)",
+      "HarvestContributingEvent": true,
+      "Name": "chrome_extension",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetFile", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Options": {"RegEx": ".:\\\\Users\\\\.*\\\\AppData\\\\Local\\\\Google\\\\Chrome\\\\User Data\\\\Default\\\\Extensions\\\\.[^\\]+", "IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetFile", "Data": "Path"}
+          ],
+          "Type": "RegexMatches", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "File", "SubCategory": "", "Type": "Create"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Chrome Extension Created",
+  "Description": "This rule was written to detect when new chrome extensions are created.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "526a24f4-5db1-5266-08f3-1ab4356b7f98",
+  "ObjectType": "DetectionRule"
+}

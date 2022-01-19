@@ -1,0 +1,48 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "High",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "Methodology"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a)",
+      "HarvestContributingEvent": true,
+      "Name": "exe_recyclebin",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcessImageFile", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+            "Options": {"IgnoreCase": true},
+            "Operands": [
+              {"Source": "TargetProcessImageFile", "Data": "Path"},
+              {"Source": "Literal", "Data": "$Recycle.Bin"}
+            ],
+            "Type": "ContainsAny", "OperandType": "String"
+          }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Process", "SubCategory": "", "Type": "Start"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Exe ImagePath Contains RecycleBin",
+  "Description": "This rule was written to detect EXEs launched from the recycle bin.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "526a24f4-5db1-4155-97e2-1ab4356b7f09",
+  "ObjectType": "DetectionRule"
+}

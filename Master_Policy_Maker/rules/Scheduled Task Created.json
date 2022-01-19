@@ -1,0 +1,61 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Informational",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1053",
+    "TA0002",
+    "TA0004",
+    "TA0028"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "((a)&(!b))",
+      "HarvestContributingEvent": true,
+      "Name": "schd_task_created",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetFile", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Options": {"RegEx": ".:\\\\Windows\\\\System32\\\\Tasks\\\\.[^\\\\]+$", "IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetFile", "Data": "Path"}
+          ],
+          "Type": "RegexMatches", "OperandType": "String"
+        },
+        "b": {
+          "Operands": [
+            {"Source": "TargetFile", "Data": "Path"},
+            {"Source": "LiteralSet", "Data": [
+              "c:\\windows\\system32\\tasks\\adobe acrobat update task",
+              "c:\\windows\\system32\\tasks\\adobe flash player ppapi notifier",
+              "c:\\windows\\system32\\tasks\\onedrive standalone update task"
+            ]}
+          ],
+          "Type": "ContainsAny", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "File", "SubCategory": "", "Type": "Create"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Scheduled Task Created",
+  "Description": "This rule was written to detect scheduled tasks that are created.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "526a24f4-5db1-5266-08f3-1ab4356b7f98",
+  "ObjectType": "DetectionRule"
+}

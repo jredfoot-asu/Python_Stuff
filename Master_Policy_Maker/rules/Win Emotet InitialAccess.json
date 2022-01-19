@@ -1,0 +1,290 @@
+{
+  "SchemaVersion": 1,
+  "Product": {
+    "name": "CylanceOPTICS"
+  },
+  "Plugin": {
+    "name": "OpticsDetector"
+  },
+  "ObjectType": "DetectionRule",
+  "Version": 2,
+  "States": [
+    {
+      "Name": "ProcTree",
+      "Scope": "Global",
+      "Function": "((wmi&wmiArg)|(wword))&pshell",
+      "FieldOperators": {
+        "wmi": {
+          "Type": "Contains",
+          "Operands": [
+            {
+              "Source": "InstigatingProcess",
+              "Data": "Name"
+            },
+            {
+              "Source": "Literal",
+              "Data": "WmiPrvSE.exe"
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        },
+        "wword": {
+          "Type": "Contains",
+          "Operands": [
+            {
+              "Source": "InstigatingProcess",
+              "Data": "Name"
+            },
+            {
+              "Source": "Literal",
+              "Data": "winword.exe"
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        },
+        "wmiArg": {
+          "Type": "ContainsAll",
+          "Operands": [
+            {
+              "Source": "InstigatingProcess",
+              "Data": "CommandLine"
+            },
+            {
+              "Source": "LiteralSet",
+              "Data": [
+                "-secured",
+                "-Embedding"
+              ]
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        },
+        "pshell": {
+          "Type": "Contains",
+          "Operands": [
+            {
+              "Source": "TargetProcess",
+              "Data": "Name"
+            },
+            {
+              "Source": "Literal",
+              "Data": "powershell.exe"
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        },
+        "a": {
+          "Type": "RegexMatches",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true,
+            "Regex": "-.*s.*e.*c.*u.*r.*e.*d"
+          },
+          "operands": [
+            {
+              "source": "InstigatingProcess",
+              "data": "CommandLine"
+            }
+          ]
+        }
+      },
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetProcess",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcessImageFile",
+          "Position": "PostActivation"
+        }
+      ],
+      "HarvestContributingEvent": true,
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Process",
+            "SubCategory": "",
+            "Type": "*"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "EmoPshell",
+      "Scope": "Global",
+      "Function": "a|b",
+      "FieldOperators": {
+        "a": {
+          "Type": "ContainsAll",
+          "Operands": [
+            {
+              "Source": "TargetPowershellTrace",
+              "Data": "ScriptBlockText"
+            },
+            {
+              "Source": "LiteralSet",
+              "Data": [
+                "$env:userprofile",
+                "http",
+                "wmiclass",
+                "win32_Process",
+                "NEt.WebcLIEnT"
+              ]
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        },
+        "b": {
+          "Type": "ContainsAll",
+          "Operands": [
+            {
+              "Source": "TargetPowershellTrace",
+              "Data": "ScriptBlockText"
+            },
+            {
+              "Source": "LiteralSet",
+              "Data": [
+                "$env:temp",
+                "http",
+                "Start-Process",
+                "NEt.WebcLIEnT"
+              ]
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        }
+      },
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetProcess",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "TargetFile",
+          "Position": "PostActivation"
+        }
+      ],
+      "HarvestContributingEvent": true,
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Scripting",
+            "SubCategory": "*",
+            "Type": "*"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "EmoFile",
+      "Scope": "Global",
+      "Function": "a|b",
+      "FieldOperators": {
+        "a": {
+          "Type": "RegexMatches",
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true,
+            "Regex": "C:\\\\Users\\\\.*\\\\AppData\\\\Local\\\\Temp\\\\.*.exe"
+          }
+        },
+        "b": {
+          "Type": "RegexMatches",
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true,
+            "Regex": "C:\\\\Users\\\\.*\\\\.*.exe"
+          }
+        }
+      },
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetFile",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        }
+      ],
+      "HarvestContributingEvent": true,
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "File",
+            "SubCategory": "*",
+            "Type": "*"
+          }
+        }
+      ]
+    }
+  ],
+  "Tags": [
+    "CylanceOPTICS"
+  ],
+  "Paths": [
+    {
+      "StateNames": [
+        "ProcTree",
+        "EmoPshell",
+        "EmoFile"
+      ]
+    }
+  ],
+  "Name": "Win Emotet InitialAccess",
+  "Description": "Detects one of Emotets Initial Access methods",
+  "AlertVolume":"TBD",
+  "Severity": "High",
+  "ActivationTimeLimit": "00:05:00",
+  "OperatingSystems": [
+    {
+      "Name": "Windows"
+    }
+  ],
+  "Id": "0e3ccaeb-37b8-41e9-80e5-7d6e443ecac1",
+  "RuleSourceGrouping": "Custom Rule"
+}

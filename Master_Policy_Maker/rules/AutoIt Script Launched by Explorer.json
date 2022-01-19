@@ -1,0 +1,63 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Medium",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "S0129",
+    "T1064",
+    "TA0002"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a&b)",
+      "HarvestContributingEvent": true,
+      "Name": "autoit_explorer",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Operands": [
+            {"Source": "InstigatingProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "explorer.exe"}
+          ],
+          "Type": "EqualsAny", "OperandType": "String"
+        },
+        "b": {
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {
+              "Source": "LiteralSet",
+              "Data": [
+                "AutoIt",
+                ".au3",
+                ".a3x",
+                "/AutoIt3ExecuteScript"
+              ]
+            }
+          ],
+          "Type": "ContainsAny", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Process", "SubCategory": "", "Type": "Start"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: AutoIt Script Launched by Explorer",
+  "Description": "This rule detects AutoIt scripts launched by Explorer.exe.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "859c46h6-5ec2-4155-97e2-2bc4356b7g00",
+  "ObjectType": "DetectionRule"
+}

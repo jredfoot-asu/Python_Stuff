@@ -1,0 +1,46 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Informational",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1076"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a)",
+      "HarvestContributingEvent": true,
+      "Name": "ext_rdp_conn",
+      "Actions": [
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetNetworkConnection", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "OperandType": "Integer", "Type": "EqualsAny",
+          "Operands": [
+            {"Source": "TargetNetworkConnection", "Data": "DestinationPort"},
+            {"Source": "Literal", "Data": 3389}
+          ]
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Network", "SubCategory": "*", "Type": "Connect"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: External RDP Connections",
+  "Description": "This rule detects outbound RDP connections.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "960c46h6-5db1-4155-97e2-1ab4356b7f98",
+  "ObjectType": "DetectionRule"
+}

@@ -1,0 +1,55 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "High",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "S0154"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a)",
+      "HarvestContributingEvent": true,
+      "Name": "cobaltstrike_payload",
+      "Actions": [
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "OperandType": "String", "Type": "ContainsAll",
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetPowershellTrace", "Data": "ScriptBlockText"},
+            {"Source": "LiteralSet", 
+              "Data": [
+                "FromBase64String",
+                "IEX",
+                "IO.Compression.GzipStream",
+                "IO.StreamReader",
+                "New-Object"
+              ]
+            }
+          ]
+        }
+      },
+      "Filters": [
+        {"Data": {"Category": "Scripting", "Type": "Powershell", "SubCategory": "PowershellTrace"}, 
+                  "Type": "Event"}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Possible Cobaltstrinke Powershell Payload",
+  "Description": "This rule is used to detect Cobaltstrike payloads within the Powershell trace logs.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "cf43f8e9-c0a3-4936-94ec-ed66ef085d4a",
+  "ObjectType": "DetectionRule"
+}

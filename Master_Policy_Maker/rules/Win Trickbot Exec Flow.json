@@ -1,0 +1,334 @@
+{
+  "SchemaVersion": 1,
+  "Product": {
+    "name": "CylanceOPTICS"
+  },
+  "Plugin": {
+    "name": "OpticsDetector"
+  },
+  "ObjectType": "DetectionRule",
+  "Version": 6,
+  "States": [
+    {
+      "Name": "pdata",
+      "Scope": "Global",
+      "Function": "a",
+      "FieldOperators": {
+        "a": {
+          "Type": "RegexMatches",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true,
+            "Regex": "[A-Za-z]{1}:\\\\ProgramData\\\\[A-Za-z0-9\\u0000-\\uFFFF]*\\.exe"
+          },
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            }
+          ]
+        }
+      },
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetFile",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcessImageFile",
+          "Position": "PostActivation"
+        }
+      ],
+      "HarvestContributingEvent": true,
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "File",
+            "SubCategory": "",
+            "Type": "*"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "tbotTXT",
+      "Scope": "Global",
+      "Function": "txt",
+      "FieldOperators": {
+        "txt": {
+          "Type": "Contains",
+          "Operands": [
+            {
+              "Source": "TargetFile",
+              "Data": "Path"
+            },
+            {
+              "Source": "Literal",
+              "Data": "\\log.txt"
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        }
+      },
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetFile",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcessImageFile",
+          "Position": "PostActivation"
+        }
+      ],
+      "HarvestContributingEvent": true,
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "File",
+            "SubCategory": "",
+            "Type": "Create"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "tbotTXTdel",
+      "Scope": "Global",
+      "Function": "a",
+      "FieldOperators": {
+        "a": {
+          "Type": "RegexMatches",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true,
+            "Regex": "[A-Za-z]{1}:\\\\Users\\\\.*\\\\AppData\\\\Roaming\\\\[A-Za-z0-9\\u00a9-\\uFFFF]*\\\\[A-Za-z0-9\\u00a9-\\uFFFF]*\\.exe"
+          },
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            }
+          ]
+        }
+      },
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetFile",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcessImageFile",
+          "Position": "PostActivation"
+        }
+      ],
+      "HarvestContributingEvent": true,
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "File",
+            "SubCategory": "",
+            "Type": "Create"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "RougeSvchostProcess",
+      "Scope": "Global",
+      "Function": "svchost&!exclude&spawned_from&missing_args",
+      "FieldOperators": {
+        "svchost": {
+          "Type": "EqualsAny",
+          "Operands": [
+            {
+              "Source": "TargetProcess",
+              "Data": "Name"
+            },
+            {
+              "Source": "LiteralSet",
+              "Data": [
+                "svchost.exe",
+                "explorer.exe"
+              ]
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        },
+        "exclude": {
+          "Type": "Equals",
+          "Operands": [
+            {
+              "Source": "InstigatingProcess",
+              "Data": "Name"
+            },
+            {
+              "Source": "LiteralSet",
+              "Data": [
+                "services.exe",
+                "msmpeng.exe",
+                "rpcnet.exe",
+                "rpcnetp.exe",
+                "mrt.exe"
+              ]
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        },
+        "spawned_from": {
+          "Type": "ContainsAny",
+          "Operands": [
+            {
+              "Source": "InstigatingProcessImageFile",
+              "Data": "Path"
+            },
+            {
+              "Source": "LiteralSet",
+              "Data": [
+                "\\ProgramData\\",
+                "\\AppData\\Roaming\\",
+                "\\AppData\\Local\\",
+                "\\Users\\Public\\"
+              ]
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        },
+        "missing_args": {
+          "Type": "EndsWithAny",
+          "Operands": [
+            {
+              "Source": "TargetProcess",
+              "Data": "CommandLine"
+            },
+            {
+              "Source": "LiteralSet",
+              "Data": [
+                "svchost.exe",
+                "explorer.exe"
+              ]
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        }
+      },
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcessImageFile",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        }
+      ],
+      "HarvestContributingEvent": true,
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Process",
+            "SubCategory": "",
+            "Type": "Start"
+          }
+        }
+      ]
+    },
+    {
+      "Name": "tbotINI",
+      "Scope": "Global",
+      "Function": "ini",
+      "FieldOperators": {
+        "ini": {
+          "Type": "Contains",
+          "Operands": [
+            {
+              "Source": "TargetFile",
+              "Data": "Path"
+            },
+            {
+              "Source": "Literal",
+              "Data": "\\settings.ini"
+            }
+          ],
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          }
+        }
+      },
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetFile",
+          "Position": "PostActivation"
+        }
+      ],
+      "HarvestContributingEvent": true,
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "File",
+            "SubCategory": "",
+            "Type": "Create"
+          }
+        }
+      ]
+    }
+  ],
+  "Tags": [
+    "CylanceOPTICS"
+  ],
+  "Paths": [
+    {
+      "StateNames": [
+        "tbotTXT",
+        "RougeSvchostProcess",
+        "tbotINI"
+      ]
+    },
+    {
+      "StateNames": [
+        "RougeSvchostProcess",
+        "tbotINI"
+      ]
+    }
+  ],
+  "Name": "Test Win Trickbot Exec Flow",
+  "Description": "Detects flow of execution that is indicative oof Trickbot",
+  "AlertVolume":"TBD",
+  "Severity": "High",
+  "OperatingSystems": [
+    {
+      "Name": "Windows"
+    }
+  ],
+  "Id": "a39e0aab-8131-424a-af6d-07f91857c996",
+  "RuleSourceGrouping": "Custom Rule"
+}

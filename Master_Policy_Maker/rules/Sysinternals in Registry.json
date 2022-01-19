@@ -1,0 +1,49 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Medium",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "S0195",
+    "T1107",
+    "T1485"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a)",
+      "HarvestContributingEvent": true,
+      "Name": "sysinternals_reg",
+      "Actions": [
+        {"ItemName": "TargetRegistryKey", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Options": {
+            "RegEx": "HKU\\\\S-.*\\\\Software\\\\Sysinternals\\\\(sdelete|pskill|procdump)", "IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetRegistryKey", "Data": "Path"}
+          ],
+          "Type": "RegexMatches", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Registry", "SubCategory": "", "Type": "PersistencePoint: KeyCreated"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Sysinternals in Registry",
+  "Description": "This rule was written to detect when sysinternals tools sdelete, pskill, and procdump are run and their EULA is added to the registry.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "526a24f4-6ec2-4155-97e2-1ab4356b7f98",
+  "ObjectType": "DetectionRule"
+}

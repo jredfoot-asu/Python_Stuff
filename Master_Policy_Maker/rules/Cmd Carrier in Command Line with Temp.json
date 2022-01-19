@@ -1,0 +1,85 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Medium",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "TA0002"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "((a&b)&(c|d))",
+      "HarvestContributingEvent": true,
+      "Name": "cmd_carrier_temp",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "OperandType": "String", "Type": "EqualsAny",
+          "Operands": [
+            {"Source": "InstigatingProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "cmd.exe"}
+          ]
+        },
+        "b": {
+          "OperandType": "String", "Type": "ContainsAny",
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "LiteralSet",
+              "Data": [
+                  "cmd", 
+                  "cmd.exe"
+              ]
+            }
+          ]
+        },
+        "c": {
+          "OperandType": "String", "Type": "ContainsAll",
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "LiteralSet", 
+              "Data": [
+                  "/c", 
+                  "AppData", 
+                  "Local", 
+                  "Temp"
+              ]
+            }
+          ]
+        },
+        "d": {
+          "OperandType": "String", "Type": "ContainsAll",
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "LiteralSet", 
+              "Data": [
+                  "/c",
+                  "Windows", 
+                  "Temp"
+              ]
+            }
+          ]
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Process", "SubCategory": "", "Type": "Start"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Cmd Carrier in Command Line with Temp",
+  "Description": "This rule detects the use of carriers in cmd command lines that also include temp.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "748c46h6-5db1-5266-97e2-1ab4356b7f98",
+  "ObjectType": "DetectionRule"
+}

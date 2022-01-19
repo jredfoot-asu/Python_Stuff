@@ -1,0 +1,57 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Informational",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "Methodology",
+    "T1060"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "((a)&(!b))",
+      "HarvestContributingEvent": true,
+      "Name": "file_in_startup",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetFile", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+            "Options": {"RegEx": ".:\\\\Users\\\\.*\\\\AppData\\\\Roaming\\\\Microsoft\\\\Windows\\\\Start Menu\\\\Programs\\\\Startup",
+            "Operands": [
+              {"Source": "TargetFile", "Data": "Path"}
+            ],
+            "Type": "RegexMatches", "OperandType": "String"
+          },
+        "b": {
+          "Operands": [
+            {"Source": "TargetFile", "Data": "Path"},
+            {"Source": "Literal", "Data": "desktop.ini"}
+          ],
+          "Type": "ContainsAny", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "File", "SubCategory": "", "Type": "Create"}
+      }
+    ],
+      "Scope": "Global"
+    }
+   }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: File Added to Startup Folder",
+  "Description": "This rule was written to detect files created in Startup.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "526a24f4-5db1-4155-97e2-1ab4356b7f98",
+  "ObjectType": "DetectionRule"
+}

@@ -1,0 +1,122 @@
+{
+  "Id": "399896ff-a718-4d57-8d49-ed2314dda1ed",
+  "SchemaVersion": 1,
+  "Version": 1,
+  "Product": {
+    "Name": "CylanceOPTICS"
+  },
+  "Plugin": {
+    "Name": "OpticsDetector"
+  },
+  "Name": "Win Emotet File Creation",
+  "Description": "Looks for file creation indicative of Emotet",
+  "RuleSource": "Cylance",
+  "RuleSourceGrouping": "Cylance Official",
+  "AlertVolume":"TBD",
+  "Severity": "High",
+  "OperatingSystems": [
+    {
+      "Name": "Windows"
+    }
+  ],
+  "ObjectType": "DetectionRule",
+  "states": [
+    {
+      "Name": "EmoFile",
+      "Scope": "Global",
+      "Function": "(a|b|c|d)",
+      "HarvestContributingEvent": true,
+      "FieldOperators": {
+        "a": {
+          "Type": "RegexMatches",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true,
+            "Regex": "appdata\\\\([A-Za-z0-9]{2,24})\\\\\\1\\.exe"
+          },
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            }
+          ]
+        },
+        "b": {
+          "Type": "RegexMatches",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true,
+            "Regex": "appdata\\\\local\\\\([A-Za-z0-9]{2,24})\\\\\\1\\.exe"
+          },
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            }
+          ]
+        },
+        "c": {
+          "Type": "RegexMatches",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true,
+            "Regex": "SysWOW64\\\\([A-Za-z0-9]{2,24})\\\\\\1\\.exe"
+          },
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            }
+          ]
+        },
+        "d": {
+          "Type": "RegexMatches",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true,
+            "Regex": "System32\\\\([A-Za-z0-9]{2,24})\\\\\\1\\.exe"
+          },
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            }
+          ]
+        }
+      },
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "File",
+            "SubCategory": "*",
+            "Type": "*"
+          }
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetProcess",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        }
+      ],
+      "ActivationTimeLimit": "-0:00:00.001"
+    }
+  ],
+  "Tags": [
+    "CylanceOptics"
+  ],
+  "Paths": [
+    {
+      "StateNames": [
+        "EmoFile"
+      ]
+    }
+  ]
+}

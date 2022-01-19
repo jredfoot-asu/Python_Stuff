@@ -1,0 +1,90 @@
+{
+  "Id": "2f09f035-4a7b-4d41-8172-4649395186c2",
+  "SchemaVersion": 1,
+  "Version": 1,
+  "Product": {
+    "Name": "CylanceOPTICS"
+  },
+  "Plugin": {
+    "Name": "OpticsDetector"
+  },
+  "Name": "Win Inhibit System Recovery Mitre T1490",
+  "Description": "Adversaries may delete or remove built-in operating system data and turn off services designed to aid in the recovery of a corrupted system to prevent recovery                                                  ",
+  "RuleSource": "Cylance",
+  "RuleSourceGrouping": "Cylance Official",
+  "Severity": "High",
+  "OperatingSystems": [
+    {
+      "Name": "Windows"
+    }
+  ],
+  "ObjectType": "DetectionRule",
+  "states": [
+    {
+      "Name": "SysRecovery",
+      "Scope": "Global",
+      "Function": "(a)",
+      "HarvestContributingEvent": true,
+      "FieldOperators": {
+        "a": {
+          "Type": "ContainsAny",
+          "OperandType": "String",
+          "Options": {},
+          "operands": [
+            {
+              "source": "TargetProcess",
+              "data": "CommandLine"
+            },
+            {
+              "source": "LiteralSet",
+              "data": [
+                "vssadmin.exe  Delete Shadows /all /quiet",
+                "bcdedit  /set {default} recoveryenabled No ",
+                "WMIC.exe  shadowcopy delete",
+                "bcdedit  /set {default}",
+                "bcdedit  /set {default} recoveryenabled No ",
+                "Delete Shadows /all /quiet",
+                "shadowcopy delete",
+                "wbadmin.exe delete catalog -quiet",
+                "delete catalog -quiet"
+              ]
+            }
+          ]
+        }
+      },
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Process",
+            "SubCategory": "",
+            "Type": "*"
+          }
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetProcess",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        }
+      ],
+      "ActivationTimeLimit": "-0:00:00.001"
+    }
+  ],
+  "Tags": [
+    "CylanceOptics"
+  ],
+  "Paths": [
+  {
+      "StateNames": [
+        "SysRecovery"
+      ]
+    }
+  ]
+}

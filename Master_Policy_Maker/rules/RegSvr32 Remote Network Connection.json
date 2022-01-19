@@ -1,0 +1,49 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Informational",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1026",
+    "T1043",
+    "T1071"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a)",
+      "HarvestContributingEvent": true,
+      "Name": "regsvr32_net_conn",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetNetworkConnection", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "OperandType": "String", "Type": "EqualsAny",
+          "Operands": [
+            {"Source": "Target", "Data": "Name"},
+            {"Source": "Literal", "Data": "regsvr32.exe"}
+          ]
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Network", "SubCategory": "*", "Type": "Connect"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: RegSvr32 Remote Network Connection",
+  "Description": "This rule detects network connections made by regsvr32.exe",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "960d56h6-5db1-4155-97e2-1ab4356b7f98",
+  "ObjectType": "DetectionRule"
+}

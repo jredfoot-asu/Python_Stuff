@@ -1,0 +1,62 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Medium",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1170"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a&b)",
+      "HarvestContributingEvent": true,
+      "Name": "mshta_abuse",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "mshta.exe"}
+          ],
+          "Type": "EqualsAny", "OperandType": "String"
+        },
+        "b": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "LiteralSet",
+              "Data": [
+                ".hta",
+                "{1E460Bd7-F1C3",
+                "javascript:",
+                "vbscript"
+              ]
+            }
+          ],
+          "Type": "ContainsAny", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Process", "SubCategory": "", "Type": "Start"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Possible Mshta Abuse",
+  "Description": "This rule detects the possible abuse of Mshta.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "859c46h6-5ec2-5266-08d3-3cd5466b7f98",
+  "ObjectType": "DetectionRule"
+}

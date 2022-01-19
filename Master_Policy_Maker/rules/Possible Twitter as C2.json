@@ -1,0 +1,61 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Medium",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "TA0011"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "((!a)&(b))",
+      "HarvestContributingEvent": true,
+      "Name": "twitter_c2",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Operands": [
+            {"Source": "InstigatingProcess", "Data": "Name"},
+            {"Source": "LiteralSet", 
+              "Data": [
+                "MicrosoftEdge.exe",
+                "MicrosoftEdgeCP.exe",
+                "chrome.exe",
+                "firefox.exe",
+                "iexplore.exe"
+              ]
+            }
+          ],
+          "Type": "EqualsAny", "OperandType": "String"
+        },
+        "b": {
+          "Operands": [
+            {"Source": "TargetDnsRequest", "Data": "Questions/Cname/1/Name"},
+            {"Source": "Literal", "Data": "twitter.com"}
+          ],
+          "Type": "EqualsAny", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Network", "SubCategory": "DNS", "Type": "Request"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Possible Twitter as C2",
+  "Description": "This rule detects possible use of twitter.com as a means for C2.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "859d57h6-5db1-4155-97e2-1ab4356b7f98",
+  "ObjectType": "DetectionRule"
+}

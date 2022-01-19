@@ -1,0 +1,60 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Informational",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1012"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a&b)",
+      "HarvestContributingEvent": true,
+      "Name": "reg_add",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "reg.exe"} 
+          ],
+          "Type": "EqualsAny", "OperandType": "String"
+        },
+        "b": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "LiteralSet",
+              "Data": [
+                "add",
+                "query"
+              ]
+            }
+          ],
+          "Type": "ContainsWord", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Process", "SubCategory": "", "Type": "Start"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Reg Used to Add and Query Registry",
+  "Description": "This rule detects reg.exe being used to query and or add to the registry.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "859c46h6-5ec2-5266-08d3-3cd5466b7f98",
+  "ObjectType": "DetectionRule"
+}

@@ -1,0 +1,105 @@
+{
+  "Id": "6077dee3-0a7e-41b6-8bb5-9083eca421a2",
+  "SchemaVersion": 1,
+  "Version": 1,
+  "Product": {
+    "Name": "CylanceOPTICS"
+  },
+  "Plugin": {
+    "Name": "OpticsDetector"
+  },
+  "Name": "Win Ryuk samss Stop",
+  "Description": "Detects Ryuk stopping samss service",
+  "RuleSource": "Cylance",
+  "RuleSourceGrouping": "Cylance Official",
+  "Severity": "High",
+  "OperatingSystems": [
+    {
+      "Name": "Windows"
+    }
+  ],
+  "ObjectType": "DetectionRule",
+  "states": [
+    {
+      "Name": "RyukKill",
+      "Scope": "Global",
+      "Function": "(!a&b)",
+      "HarvestContributingEvent": true,
+      "FieldOperators": {
+        "a": {
+          "Type": "IsTrue",
+          "OperandType": "Boolean",
+          "operands": [
+            {
+              "source": "InstigatingProcessImageFile",
+              "data": "HasValidSignature"
+            }
+          ]
+        },
+        "b": {
+          "Type": "ContainsAll",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          },
+          "operands": [
+            {
+              "source": "TargetProcess",
+              "data": "CommandLine"
+            },
+            {
+              "source": "LiteralSet",
+              "data": [
+                "net.exe",
+                "stop",
+                "samss",
+                "/y"
+              ]
+            }
+          ]
+        }
+      },
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Process",
+            "SubCategory": "*",
+            "Type": "Start"
+          }
+        },
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "File",
+            "SubCategory": "*",
+            "Type": "*"
+          }
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetProcess",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        }
+      ],
+      "ActivationTimeLimit": "-0:00:00.001"
+    }
+  ],
+  "Tags": [
+    "CylanceOptics"
+  ],
+  "Paths": [
+    {
+      "StateNames": [
+        "RyukKill"
+      ]
+    }
+  ]
+}

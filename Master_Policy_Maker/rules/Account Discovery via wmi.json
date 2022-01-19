@@ -1,0 +1,78 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Informational",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1018",
+    "T1069",
+    "T1087"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a&b&c)",
+      "HarvestContributingEvent": true,
+      "Name": "acct_disc_wmi",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "wmic.exe"}
+          ],
+          "Type": "EqualsAny", "OperandType": "String"
+        },
+        "b": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "LiteralSet", 
+              "Data": [
+                "get",
+                "useraccount"
+
+              ]
+            }
+          ],
+          "Type": "ContainsAllWords", "OperandType": "String"
+        },
+        "c": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "LiteralSet", 
+              "Data": [
+                "domain",
+                "name",
+                "sid"
+
+              ]
+            }
+          ],
+          "Type": "ContainsAny", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Process", "SubCategory": "", "Type": "Start"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Account Discovery via wmi",
+  "Description": "This rule detects the use of wmi as a means of performing account discovery.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "960c46h6-7df4-6266-08d3-2bc4356b7f98",
+  "ObjectType": "DetectionRule"
+}

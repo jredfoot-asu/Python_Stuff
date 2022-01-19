@@ -1,0 +1,65 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Medium",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1054"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "((a&b)|(a&c))",
+      "HarvestContributingEvent": true,
+      "Name": "logs_cleared",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "Name"},
+            {
+              "Source": "Literal",
+              "Data": "wevtutil.exe"}
+          ],
+          "Type": "EqualsAny", "OperandType": "String"
+        },
+        "b": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "Literal", "Data": "cl"}
+          ],
+          "Type": "ContainsWord", "OperandType": "String"
+        },
+        "c": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "Literal", "Data": "clear-log"}
+          ],
+          "Type": "ContainsAny", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Process", "SubCategory": "", "Type": "Start"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Event Logs Cleared via Wevtutil",
+  "Description": "This rule detects wevtutil being called to clear event logs.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "859c46h6-5ec2-5266-97e2-2bc4356b7f98",
+  "ObjectType": "DetectionRule"
+}

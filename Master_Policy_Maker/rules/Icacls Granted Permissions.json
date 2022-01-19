@@ -1,0 +1,66 @@
+{
+  "RuleSourceGrouping": "Optics Official",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Cylance",
+  "Severity": "Low",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1222",
+    "TA0005"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a&b&c)",
+      "HarvestContributingEvent": true,
+      "Name": "icacls_grant",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "OperandType": "String",
+          "Type": "Contains",
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "InstigatingProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "cmd.exe"}
+          ]
+        },
+        "b": {
+          "OperandType": "String",
+          "Type": "Contains",
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "icacls.exe"}
+          ]
+        },
+        "c": {
+          "OperandType": "String", "Type": "ContainsAny",
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "Commandline"},
+            {"Source": "Literal", "Data": "grant"}
+          ]
+        }
+      },
+      "Filters": [
+        {"Data": {"Category": "Process", "Type": "Start", "SubCategory": ""}, "Type": "Event"}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Icacls Granted Permissions",
+  "Description": "This rule was created to identify when icacls is run to grant permissions via cmd.exe.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "cf43f8e9-c0a3-4936-94ec-ed66ef974c4a",
+  "ObjectType": "DetectionRule"
+}

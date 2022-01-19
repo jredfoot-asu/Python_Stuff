@@ -1,0 +1,94 @@
+{
+  "Id": "ab14dae5-6535-424a-81fd-d25b8baee1ef",
+  "SchemaVersion": 1,
+  "Version": 1,
+  "Product": {
+    "Name": "CylanceOPTICS"
+  },
+  "Plugin": {
+    "Name": "OpticsDetector"
+  },
+  "Name": "Win TrickBot Powershell",
+  "Description": "Detects the process of using powershell to alter local policies and disable windows defender",
+  "RuleSource": "Cylance",
+  "RuleSourceGrouping": "Cylance Official",
+  "AlertVolume":"TBD",
+  "Severity": "High",
+  "OperatingSystems": [
+    {
+      "Name": "Windows"
+    }
+  ],
+  "ObjectType": "DetectionRule",
+  "states": [
+    {
+      "Name": "Powershell",
+      "Scope": "Global",
+      "Function": "(a)",
+      "HarvestContributingEvent": true,
+      "FieldOperators": {
+        "a": {
+          "Type": "ContainsAny",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          },
+          "operands": [
+            {
+              "source": "TargetPowershellTrace",
+              "data": "ScriptBlockText"
+            },
+            {
+              "source": "LiteralSet",
+              "data": [
+                  "Set-MpPreference -DisableIOAVProtection",
+                  "Set-MpPreference -DisableBlockAtFirstSeen",
+                  "Set-MpPreference -DisableIntrusionPreventionSyst",
+                  "Set-MpPreference -DisablePrivacyMode",
+                  "Set-MpPreference -LowThreatDefaultAction",
+                  "Set-MpPreference -ModerateThreatDefaultAction",
+                  "Set-MpPreference -DisableBehaviorMonitoring",
+                  "Set-MpPreference -DisableScriptScanning",
+                  "Set-MpPreference -DisableRealtimeMonitoring",
+                  "Set-MpPreference -SevereThreatDefaultAction"
+                ]
+            }
+          ]
+        }
+      },
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Scripting",
+            "SubCategory": "*",
+            "Type": "*"
+          }
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetProcess",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        }
+      ],
+      "ActivationTimeLimit": "-0:00:00.001"
+    }
+  ],
+  "Tags": [
+    "CylanceOptics"
+  ],
+  "Path": [
+    {
+        "StateNames": [
+            "Powershell"
+        ]
+    }
+  ]
+}

@@ -1,0 +1,317 @@
+{
+    "device_control": {
+        "configurations": [
+            {
+                "device_class": "AndroidUSB",
+                "control_mode": "FullAccess"
+            },
+            {
+                "control_mode": "FullAccess",
+                "device_class": "iOS"
+            },
+            {
+                "control_mode": "FullAccess",
+                "device_class": "StillImage"
+            },
+            {
+                "device_class": "USBCDDVDRW",
+                "control_mode": "FullAccess"
+            },
+            {
+                "control_mode": "FullAccess",
+                "device_class": "USBDrive"
+            },
+            {
+                "device_class": "VMWareMount",
+                "control_mode": "FullAccess"
+            },
+            {
+                "control_mode": "FullAccess",
+                "device_class": "WPD"
+            }
+        ],
+        "exclusion_list": []
+    },
+    "policy": [
+        {
+            "value": "1",
+            "name": "auto_blocking"
+        },
+        {
+            "value": "1",
+            "name": "auto_uploading"
+        },
+        {
+            "value": "500",
+            "name": "threat_report_limit"
+        },
+        {
+            "name": "low_confidence_threshold",
+            "value": "-600"
+        },
+        {
+            "value": "2",
+            "name": "full_disc_scan"
+        },
+        {
+            "name": "watch_for_new_files",
+            "value": "1"
+        },
+        {
+            "value": "1",
+            "name": "memory_exploit_detection"
+        },
+        {
+            "value": "0",
+            "name": "trust_files_in_scan_exception_list"
+        },
+        {
+            "name": "logpolicy",
+            "value": "1"
+        },
+        {
+            "name": "script_control",
+            "value": "1"
+        },
+        {
+            "value": "0",
+            "name": "prevent_service_shutdown"
+        },
+        {
+            "name": "scan_max_archive_size",
+            "value": "150"
+        },
+        {
+            "name": "sample_copy_path",
+            "value": null
+        },
+        {
+            "name": "kill_running_threats",
+            "value": "0"
+        },
+        {
+            "name": "show_notifications",
+            "value": "0"
+        },
+        {
+            "value": "1000",
+            "name": "optics_set_disk_usage_maximum_fixed"
+        },
+        {
+            "name": "optics_malware_auto_upload",
+            "value": "1"
+        },
+        {
+            "value": "1",
+            "name": "optics_memory_defense_auto_upload"
+        },
+        {
+            "value": "0",
+            "name": "optics_script_control_auto_upload"
+        },
+        {
+            "value": "0",
+            "name": "optics_application_control_auto_upload"
+        },
+        {
+            "name": "optics_sensors_dns_visibility",
+            "value": "1"
+        },
+        {
+            "value": "1",
+            "name": "optics_sensors_private_network_address_visibility"
+        },
+        {
+            "name": "optics_sensors_windows_event_log_visibility",
+            "value": "1"
+        },
+        {
+            "name": "optics_sensors_advanced_powershell_visibility",
+            "value": "1"
+        },
+        {
+            "name": "optics_sensors_advanced_wmi_visibility",
+            "value": "1"
+        },
+        {
+            "name": "optics_sensors_advanced_executable_parsing",
+            "value": "1"
+        },
+        {
+            "name": "optics_sensors_enhanced_process_hooking_visibility",
+            "value": "1"
+        },
+        {
+            "value": "1",
+            "name": "device_control"
+        },
+        {
+            "value": "1",
+            "name": "optics"
+        },
+        {
+            "name": "auto_delete",
+            "value": "0"
+        },
+        {
+            "name": "days_until_deleted",
+            "value": "0"
+        },
+        {
+            "name": "pdf_auto_uploading",
+            "value": "0"
+        },
+        {
+            "name": "ole_auto_uploading",
+            "value": "0"
+        },
+        {
+            "name": "docx_auto_uploading",
+            "value": "0"
+        },
+        {
+            "name": "python_auto_uploading",
+            "value": "0"
+        },
+        {
+            "value": "0",
+            "name": "autoit_auto_uploading"
+        },
+        {
+            "value": "0",
+            "name": "powershell_auto_uploading"
+        },
+        {
+            "value": "0",
+            "name": "data_privacy"
+        },
+        {
+            "value": null,
+            "name": "custom_thumbprint"
+        },
+        {
+            "name": "scan_exception_list",
+            "value": []
+        },
+        {
+            "value": "1",
+            "name": "optics_sensors_enhanced_file_read_visibility"
+        },
+        {
+            "name": "optics_sensors_windows_advanced_audit_visibility",
+            "value": "1"
+        }
+    ],
+    "memoryviolation_actions": {
+        "memory_violations": [
+            {
+                "violation_type": "lsassread",
+                "action": "Alert"
+            },
+            {
+                "violation_type": "outofprocessunmapmemory",
+                "action": "Alert"
+            },
+            {
+                "violation_type": "stackpivot",
+                "action": "Alert"
+            },
+            {
+                "violation_type": "stackprotect",
+                "action": "Alert"
+            },
+            {
+                "violation_type": "outofprocessoverwritecode",
+                "action": "Alert"
+            },
+            {
+                "action": "Alert",
+                "violation_type": "outofprocesscreatethread"
+            },
+            {
+                "violation_type": "overwritecode",
+                "action": "Alert"
+            },
+            {
+                "action": "Alert",
+                "violation_type": "outofprocesswritepe"
+            },
+            {
+                "violation_type": "outofprocessallocation",
+                "action": "Alert"
+            },
+            {
+                "violation_type": "outofprocessmap",
+                "action": "Alert"
+            },
+            {
+                "violation_type": "outofprocesswrite",
+                "action": "Alert"
+            },
+            {
+                "action": "Alert",
+                "violation_type": "outofprocessapc"
+            }
+        ],
+        "memory_violations_ext": [
+            {
+                "violation_type": "dyldinjection",
+                "action": "Alert"
+            },
+            {
+                "violation_type": "trackdataread",
+                "action": "Alert"
+            },
+            {
+                "action": "Alert",
+                "violation_type": "zeroallocate"
+            },
+            {
+                "action": "Alert",
+                "violation_type": "maliciouspayload"
+            }
+        ],
+        "memory_exclusion_list": []
+    },
+    "script_control": {
+        "powershell_settings": {
+            "control_mode": "Alert",
+            "console_mode": "Allow"
+        },
+        "macro_settings": {
+            "control_mode": "Alert"
+        },
+        "global_settings": {
+            "allowed_folders": null,
+            "control_mode": "Alert"
+        },
+        "activescript_settings": {
+            "control_mode": "Alert"
+        }
+    },
+    "filetype_actions": {
+        "suspicious_files": [
+            {
+                "actions": "0",
+                "file_type": "executable"
+            }
+        ],
+        "threat_files": [
+            {
+                "actions": "0",
+                "file_type": "executable"
+            }
+        ]
+    },
+    "logpolicy": {
+        "retentiondays": "30",
+        "log_upload": {
+            "compress": "True",
+            "delete": "False"
+        },
+        "maxlogsize": "100"
+    },
+    "file_exclusions": [],
+    "policy_name": "Baseline",
+    "checksum": ""
+}

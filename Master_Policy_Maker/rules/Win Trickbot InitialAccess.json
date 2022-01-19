@@ -1,0 +1,182 @@
+{
+  "Id": "8afd92e8-f617-4837-9190-81e5ca4211d8",
+  "SchemaVersion": 1,
+  "Version": 1,
+  "Product": {
+    "Name": "CylanceOPTICS"
+  },
+  "Plugin": {
+    "Name": "OpticsDetector"
+  },
+  "Name": "Win Trickbot InitialAccess",
+  "Description": "Detects Trickbot InitialAccess",
+  "RuleSource": "Cylance",
+  "RuleSourceGrouping": "Cylance Official",
+  "AlertVolume":"TBD",
+  "Severity": "Medium",
+  "OperatingSystems": [
+    {
+      "Name": "Windows"
+    }
+  ],
+  "ObjectType": "DetectionRule",
+  "states": [
+    {
+      "Name": "wwordbat",
+      "Scope": "Global",
+      "Function": "(a&b)",
+      "HarvestContributingEvent": true,
+      "FieldOperators": {
+        "a": {
+          "Type": "Contains",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          },
+          "operands": [
+            {
+              "source": "InstigatingProcess",
+              "data": "Name"
+            },
+            {
+              "source": "Literal",
+              "data": "winword.exe"
+            }
+          ]
+        },
+        "b": {
+          "Type": "Contains",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          },
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            },
+            {
+              "source": "Literal",
+              "data": ".bat"
+            }
+          ]
+        }
+      },
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Process",
+            "SubCategory": "*",
+            "Type": "Start"
+          }
+        },
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "File",
+            "SubCategory": "*",
+            "Type": "*"
+          }
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetFile",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        }
+      ],
+      "ActivationTimeLimit": "-0:00:00.001"
+    },
+    {
+      "Name": "wwordjse",
+      "Scope": "Global",
+      "Function": "(a&b)",
+      "HarvestContributingEvent": true,
+      "FieldOperators": {
+        "a": {
+          "Type": "Contains",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          },
+          "operands": [
+            {
+              "source": "InstigatingProcess",
+              "data": "Name"
+            },
+            {
+              "source": "Literal",
+              "data": "winword.exe"
+            }
+          ]
+        },
+        "b": {
+          "Type": "Contains",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          },
+          "operands": [
+            {
+              "source": "TargetFile",
+              "data": "Path"
+            },
+            {
+              "source": "Literal",
+              "data": ".jse"
+            }
+          ]
+        }
+      },
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Process",
+            "SubCategory": "*",
+            "Type": "Start"
+          }
+        },
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "File",
+            "SubCategory": "*",
+            "Type": "*"
+          }
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetFile",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        }
+      ],
+      "ActivationTimeLimit": "-0:00:00.001"
+    }
+  ],
+  "Tags": [
+    "CylanceOptics"
+  ],
+  "Paths": [
+    {
+      "StateNames": [
+        "wwordbat",
+        "wwordjse"
+      ]
+    }
+  ]
+}

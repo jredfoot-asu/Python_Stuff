@@ -1,0 +1,163 @@
+{
+    "MaximumConcurrentActivations": 50,
+    "ActivationLifetimeLimit": "00:10:00",
+    "TerminateActiveDfaIfActivatingProcessesEnd": false,
+    "ActivationCanUtilizeDeviceStateEvents": false,
+    "AllowMultipleActivationsPerContext": true,
+    "OperatingSystems": [
+        {
+            "Name": "Windows"
+        }
+    ],
+    "States": [
+        {
+            "Name": "RyukExecution",
+            "Scope": "Global",
+            "Function": "(net&stop&cmds&confirm)|8LAN",
+            "FieldOperators": {
+                "net": {
+                    "Type": "EqualsAny",
+                    "Operands": [
+                        {
+                            "Source": "TargetProcess",
+                            "Data": "Name"
+                        },
+                        {
+                            "Source": "Literal",
+                            "Data": [
+                                "net.exe",
+                                "net1.exe"
+                            ]
+                        }
+                    ],
+                    "OperandType": "String",
+                    "Options": {
+                        "IgnoreCase": true
+                    }
+                },
+                "stop": {
+                    "Type": "ContainsWord",
+                    "Operands": [
+                        {
+                            "Source": "TargetProcess",
+                            "Data": "CommandLine"
+                        },
+                        {
+                            "Source": "Literal",
+                            "Data": "stop"
+                        }
+                    ],
+                    "OperandType": "String",
+                    "Options": {
+                        "IgnoreCase": true
+                    }
+                },
+                "cmds": {
+                    "Type": "ContainsAnyWord",
+                    "Operands": [
+                        {
+                            "Source": "TargetProcess",
+                            "Data": "CommandLine"
+                        },
+                        {
+                            "Source": "Literal",
+                            "Data": [
+                                "audioendpointbuilder",
+                                "samss"
+                            ]
+                        }
+                    ],
+                    "OperandType": "String",
+                    "Options": {
+                        "IgnoreCase": true
+                    }
+                },
+                "confirm": {
+                    "Type": "EndsWith",
+                    "Operands": [
+                        {
+                            "Source": "TargetProcess",
+                            "Data": "CommandLine"
+                        },
+                        {
+                            "Source": "Literal",
+                            "Data": "/y"
+                        }
+                    ],
+                    "OperandType": "String",
+                    "Options": {
+                        "IgnoreCase": true
+                    }
+                },
+                "8LAN": {
+                    "Type": "EndsWith",
+                    "Operands": [
+                        {
+                            "Source": "TargetProcess",
+                            "Data": "CommandLine"
+                        },
+                        {
+                            "Source": "Literal",
+                            "Data": "8 LAN"
+                        }
+                    ],
+                    "OperandType": "String",
+                    "Options": {
+                        "IgnoreCase": true
+                    }
+                }
+            },
+            "ActivationTimeLimit": "-0:00:00.001",
+            "Actions": [
+                {
+                    "Type": "AOI",
+                    "ItemName": "TargetProcess",
+                    "Position": "PostActivation"
+                },
+                {
+                    "Type": "AOI",
+                    "ItemName": "InstigatingProcess",
+                    "Position": "PostActivation"
+                }
+            ],
+            "HarvestContributingEvent": true,
+            "Filters": [
+                {
+                    "Type": "Event",
+                    "Data": {
+                        "Category": "Process",
+                        "SubCategory": "",
+                        "Type": "Start"
+                    }
+                }
+            ]
+        }
+    ],
+    "Paths": [
+        {
+            "StateNames": [
+                "RyukExecution"
+            ]
+        }
+    ],
+    "ObjectType": "DetectionRule",
+    "Name": "Ryuk Ransomware",
+    "Id": "ed615cf6-1ad5-74d0-baa0-0533-2c3eda4f",
+    "Version": 1,
+    "SchemaVersion": 1,
+    "Description": "Detects Ryuk Ransomware prior to execution of the encryption routine",
+    "Tags": [
+        "CylanceOPTICS"
+    ],
+    "RuleSource": "",
+    "RuleSourceGrouping": "Custom Rule",
+    "Severity": "High",
+    "Product": {
+        "Name": "CylanceOPTICS"
+    },
+    "Plugin": {
+        "Name": "OpticsDetector"
+    },
+    "NotValidBefore": "1970-01-01T00:00:00.000Z",
+    "NotValidAfter": "9999-12-31T23:59:59.999Z"
+}

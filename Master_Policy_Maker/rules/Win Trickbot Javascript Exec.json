@@ -1,0 +1,87 @@
+{
+  "Id": "b4aacfb9-c70c-46f6-ae37-b970ebc9dd9b",
+  "SchemaVersion": 1,
+  "Version": 1,
+  "Product": {
+    "Name": "CylanceOPTICS"
+  },
+  "Plugin": {
+    "Name": "OpticsDetector"
+  },
+  "Name": "Win Trickbot Javascript Exec",
+  "Description": "Detects the use of cscript to launch a jse file. ",
+  "RuleSource": "Cylance",
+  "RuleSourceGrouping": "Cylance Official",
+  "AlertVolume":"TBD",
+  "Severity": "High",
+  "OperatingSystems": [
+    {
+      "Name": "Windows"
+    }
+  ],
+  "ObjectType": "DetectionRule",
+  "states": [
+    {
+      "Name": "cscript",
+      "Scope": "Global",
+      "Function": "(a)",
+      "HarvestContributingEvent": true,
+      "FieldOperators": {
+        "a": {
+          "Type": "ContainsAll",
+          "OperandType": "String",
+          "Options": {
+            "IgnoreCase": true
+          },
+          "operands": [
+            {
+              "source": "TargetProcess",
+              "data": "CommandLine"
+            },
+            {
+              "source": "LiteralSet",
+              "data": [
+                "cscript",
+                "nologo",
+                ".jse"
+              ]
+            }
+          ]
+        }
+      },
+      "Filters": [
+        {
+          "Type": "Event",
+          "Data": {
+            "Category": "Process",
+            "SubCategory": "",
+            "Type": "*"
+          }
+        }
+      ],
+      "Actions": [
+        {
+          "Type": "AOI",
+          "ItemName": "TargetProcess",
+          "Position": "PostActivation"
+        },
+        {
+          "Type": "AOI",
+          "ItemName": "InstigatingProcess",
+          "Position": "PostActivation"
+        }
+      ],
+      "ActivationTimeLimit": "-0:00:00.001"
+    }
+  ],
+  "Tags": [
+    "CylanceOptics"
+  ],
+  "Paths": [
+  {
+      "StateNames": [
+        "cscript"
+      ]
+    }
+  ]
+}

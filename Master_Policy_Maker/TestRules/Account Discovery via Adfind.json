@@ -1,0 +1,80 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Low",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1018",
+    "T1069",
+    "T1087"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "((a&b)|(a&c))",
+      "HarvestContributingEvent": true,
+      "Name": "acct_disc_adfind",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "adfind.exe"}
+          ],
+          "Type": "EqualsAny", "OperandType": "String"
+        },
+        "b": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "LiteralSet", 
+              "Data": [
+                ">",
+                "-cs",
+                "-f",
+                "-sc",
+                "-subnets"
+              ]
+            }
+          ],
+          "Type": "ContainsAny", "OperandType": "String"
+        },
+        "c": {
+          "Options": {"IgnoreCase": true},
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "CommandLine"},
+            {"Source": "LiteralSet", 
+              "Data": [
+                "-",
+                "b",
+                "c",
+                "g"
+              ]
+            }
+          ],
+          "Type": "ContainsAll", "OperandType": "String"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Process", "SubCategory": "", "Type": "Start"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Account Discovery via Adfind",
+  "Description": "This rule detects the use of Adfind as a means of performing account discovery.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "960c46h6-8eg4-7266-08d3-2bc4356b7f98",
+  "ObjectType": "DetectionRule"
+}

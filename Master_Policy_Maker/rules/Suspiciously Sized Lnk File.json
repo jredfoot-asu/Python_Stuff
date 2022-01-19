@@ -1,0 +1,55 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Medium",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1023",
+    "TA0003"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a&b)",
+      "HarvestContributingEvent": true,
+      "Name": "large_lnk_file",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetFile", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "Operands": [
+            {"Source": "TargetFile", "Data": "Path"},
+            {"Source": "Literal", "Data": ".lnk"}
+          ],
+          "Type": "EndsWith", "OperandType": "String"
+        },
+        "b": {
+          "Operands": [
+            {"Source": "TargetFile", "Data": "Size"},
+            {"Source": "Literal", "Data": 100000}
+          ],
+          "Type": "GreaterThan", "OperandType": "Integer"
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "File", "SubCategory": "", "Type": "Create"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: Suspiciously Sized Lnk File",
+  "Description": "This rule was written to detect LNK files that are unusually large that may contain malicious command lines.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "526a24f4-5db1-6266-97e2-1ab4356b7f09",
+  "ObjectType": "DetectionRule"
+}

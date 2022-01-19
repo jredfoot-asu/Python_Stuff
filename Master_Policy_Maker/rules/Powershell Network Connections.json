@@ -1,0 +1,56 @@
+{
+  "RuleSourceGrouping": "Custom Rules",
+  "AllowMultipleActivationsPerContext": true,
+  "RuleSource": "Custom",
+  "Severity": "Informational",
+  "OperatingSystems": [{"Name": "Windows"}],
+  "Tags": [
+    "T1026",
+    "T1043",
+    "T1071"
+  ],
+  "Product": {"Name": "CylanceOPTICS"},
+  "Plugin": {"Name": "OpticsDetector"},
+  "TerminateActiveDfaIfActivatingProcessesEnd": true,
+  "ActivationLifetimeLimit": "00:10:00",
+  "States": [
+    {
+      "Function": "(a|b)",
+      "HarvestContributingEvent": true,
+      "Name": "powershell_network",
+      "Actions": [
+        {"ItemName": "InstigatingProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetProcess", "Type": "AOI", "Position": "PostActivation"},
+        {"ItemName": "TargetNetworkConnection", "Type": "AOI", "Position": "PostActivation"}
+      ],
+      "FieldOperators": {
+        "a": {
+          "OperandType": "String", "Type": "EqualsAny",
+          "Operands": [
+            {"Source": "InstigatingProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "powershell.exe"}
+          ]
+        },
+        "b": {
+          "OperandType": "String", "Type": "ContainsAny",
+          "Operands": [
+            {"Source": "TargetProcess", "Data": "Name"},
+            {"Source": "Literal", "Data": "powershell.exe"}
+          ]
+        }
+      },
+      "Filters": [
+        {"Type": "Event", "Data": {"Category": "Network", "SubCategory": "*", "Type": "Connect"}}
+      ],
+      "Scope": "Global"
+    }
+  ],
+  "Version": 1,
+  "MaximumConcurrentActivations": 50,
+  "Name": "CORVID: PowershellNetwork Connections",
+  "Description": "This rule detects Powershell network connections.",
+  "SchemaVersion": 1,
+  "ActivationCanUtilizeDeviceStateEvents": false,
+  "Id": "859c46h6-5db1-4155-97e2-1ab4356b7f98",
+  "ObjectType": "DetectionRule"
+}
