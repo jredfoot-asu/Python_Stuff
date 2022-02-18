@@ -1,0 +1,1 @@
+awk -F ',' '$2 == $3 { count ++ } { print $3, $4, $5 }' Goalsetter_Header_From_EXISTS.csv | sort | uniq -c

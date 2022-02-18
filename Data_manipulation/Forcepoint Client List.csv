@@ -1,0 +1,7 @@
+Top values of organization.name,Top values of network.application,Top values of source.ip,Top values of url.original,Count of records,Analysis Conducted(Y/N) ,Threat Found(Y/N) ,Device name 
+Visser Precision,http-proxy,10.55.13.80,forcepoint-cloud-ops-ca-2021.crl,5,,,
+Visser Precision,http-proxy,10.55.13.60,forcepoint-cloud-ops-ca-2021.crl,2,,,
+Visser Precision,http-proxy,10.55.13.72,forcepoint-cloud-ops-ca-2021.crl,1,,,
+Visser Precision,web-browsing,10.55.13.93,forcepoint-cloud-ops-ca-2021.crl,2,,,
+Visser Precision,web-browsing,10.55.13.82,forcepoint-cloud-ops-ca-2021.crl,1,,,
+Barr Brands,web-browsing,172.18.11.75,forcepoint-cloud-ops-ca-2021.crl,3,,,

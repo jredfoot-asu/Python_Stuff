@@ -1,0 +1,13 @@
+Top values of organization.name,Top values of network.application,Top values of url.original,Top values of source.ip,Count of records,Analysis Conducted(Y/N) ,Threat Found(Y/N) ,Device name 
+Hardwire llc,ssl,ubiquiti.postaffiliatepro.com/,10.10.4.53,22,,,
+Hardwire llc,ssl,ubiquiti.postaffiliatepro.com/,10.10.4.66,1,,,
+Corvid Technologies,ssl,ubiquiti.postaffiliatepro.com/,10.100.4.46,6,,,
+Stevens Aerospace,ssl,ubiquiti.postaffiliatepro.com/,10.0.1.79,4,,,
+Stevens Aerospace,ssl,ubiquiti.postaffiliatepro.com/,10.0.1.43,1,,,
+Stevens Aerospace,ssl,ubiquiti.postaffiliatepro.com/,10.0.1.105,1,,,
+Akoustis,ssl,ubiquiti.postaffiliatepro.com/,172.16.5.70,2,,,
+McBrayer PLLC,ssl,ubiquiti.postaffiliatepro.com/,192.168.1.226,2,,,
+Northeast Tool,ssl,ubiquiti.postaffiliatepro.com/,10.100.2.131,2,,,
+Sutterfield Financial Group,ssl,ubiquiti.postaffiliatepro.com/,192.168.0.90,2,,,
+Corvid Cyberdefense,web-browsing,ubiquiti.png,10.51.6.12,1,,,
+PBS Modular,ssl,ubiquiti.postaffiliatepro.com/,192.168.1.61,1,,,

@@ -1,0 +1,7 @@
+Top values of organization.name,Top values of source.ip,Top values of network.application,Top values of url.original,Count of records,Analysis Conducted(Y/N) ,Threat Found(Y/N) ,Device name 
+Corvid Technologies,10.100.10.15,ssl,cloudera.demdex.net/,1,,,
+Corvid Technologies,10.124.191.151,ssl,cloudera.tt.omtrdc.net/,1,,,
+FP1 Strategies,10.14.11.32,ssl,cloudera.demdex.net/,1,,,
+FP1 Strategies,,ssl,cloudera.tt.omtrdc.net/,1,,,
+WelbeHealth,,ssl,cloudera.demdex.net/,1,,,
+WelbeHealth,,ssl,cloudera.tt.omtrdc.net/,1,,,

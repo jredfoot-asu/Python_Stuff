@@ -1,0 +1,18 @@
+﻿"Top values of cylance.event.type","Top values of observer.name","Count of records"
+Threat,"DESKTOP-THMNM28",2
+Threat,"HT-TITAN-1",2
+ScriptControl,"DESKTOP-THMNM28",30
+ScriptControl,"HT-NUC-1",30
+ScriptControl,"HT-NUC-3",30
+ScriptControl,"HT-TITAN-1",30
+ScriptControl,"HT-TITAN-2",30
+ScriptControl,"HT-NUC-2",29
+ScriptControl,UNETICHTRADING,25
+ScriptControl,"HT-TITAN-3",10
+ExploitAttempt,"DESKTOP-THMNM28",8
+ExploitAttempt,"HT-TITAN-1",1
+ExploitAttempt,"HT-TITAN-2",1
+ExploitAttempt,"HT-TITAN-3",1
+DeviceControl,"DESKTOP-THMNM28",39
+DeviceControl,"HT-NUC-2",32
+DeviceControl,"HT-NUC-1",2
