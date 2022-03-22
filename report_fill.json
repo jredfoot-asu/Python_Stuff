@@ -1,0 +1,227 @@
+function reportFill() {
+  var client_folder = DriveApp.getFolderById(
+    "1CkOwPmUeb6VdiqZScCu45SP_QBXN1Z1w"
+  );
+  var month_report_folder = client_folder.getFolders().next().getId();
+  var individual_client_folders = DriveApp.getFolderById(
+    month_report_folder
+  ).getFolders();
+  while (individual_client_folders.hasNext()) {
+    var document = DriveApp.getFileById(
+      "16CbRL-Cv0AcUMlW-jKAeaYirKmgGiEGZi06XRT7kb9Y"
+    );
+    var client = individual_client_folders.next().getId();
+    var report = DriveApp.getFolderById(client).getFiles().next().getId();
+    console.log(report);
+    var report_data = SpreadsheetApp.openById(report)
+      .getDataRange()
+      .getValues();
+    const copy = document.makeCopy(DriveApp.getFolderById(client));
+    const doc = DocumentApp.openById(copy.getId());
+    const body = doc.getBody();
+    // Executive Summary Input
+    body.replaceText("{{Customer_Name}}", report_data[1][2]);
+    body.replaceText("{{Cylance_Toytal}}", report_data[2][2]);
+    body.replaceText("{{URL_Total}}", report_data[3][2]);
+
+    // Cylance Data Analysis
+    body.replaceText("{{Device_Count}}", report_data[4][2]);
+    body.replaceText("{{Device_Control_Total}}", report_data[5][2]);
+    body.replaceText("{{Device_W_Control}}", report_data[6][2]);
+    body.replaceText("{{Quarantined_Toal}}", report_data[7][2]);
+    body.replaceText("{{Quarantined_Devices}}", report_data[8][2]);
+    body.replaceText("{{Allowed_Execution}}", report_data[9][2]);
+    body.replaceText("{{Script_Control}}", report_data[10][2]);
+    body.replaceText("{{Script_Control_Devices}}", report_data[11][2]);
+    body.replaceText("{{Exploit_Control}}", report_data[12][2]);
+    body.replaceText("{{Exploit_Control_Devices}}", report_data[13][2]);
+
+    // Table 2
+    body.replaceText("{{Table2_Host1}}", report_data[15][2]);
+    body.replaceText("{{Table2_Count1}}", report_data[15][4]);
+    body.replaceText("{{Table2_Host2}}", report_data[16][2]);
+    body.replaceText("{{Table2_Count2}}", report_data[16][4]);
+    body.replaceText("{{Table2_Host3}}", report_data[17][2]);
+    body.replaceText("{{Table2_Count3}}", report_data[17][4]);
+    body.replaceText("{{Table2_Host4}}", report_data[18][2]);
+    body.replaceText("{{Table2_Count4}}", report_data[18][4]);
+    body.replaceText("{{Table2_Host5}}", report_data[19][2]);
+    body.replaceText("{{Table2_Count5}}", report_data[19][4]);
+
+    // Table 3
+    body.replaceText("{{Table3_Host1}}", report_data[21][2]);
+    body.replaceText("{{Table3_Value1}}", report_data[21][4]);
+    body.replaceText("{{Table3_Count1}}", report_data[21][6]);
+    body.replaceText("{{Table3_Host2}}", report_data[22][2]);
+    body.replaceText("{{Table3_Value2}}", report_data[22][4]);
+    body.replaceText("{{Table3_Count2}}", report_data[22][6]);
+    body.replaceText("{{Table3_Host3}}", report_data[23][2]);
+    body.replaceText("{{Table3_Value3}}", report_data[23][4]);
+    body.replaceText("{{Table3_Count3}}", report_data[23][6]);
+    body.replaceText("{{Table3_Host4}}", report_data[24][2]);
+    body.replaceText("{{Table3_Value4}}", report_data[24][4]);
+    body.replaceText("{{Table3_Count4}}", report_data[24][6]);
+    body.replaceText("{{Table3_Host5}}", report_data[25][2]);
+    body.replaceText("{{Table3_Value5}}", report_data[25][4]);
+    body.replaceText("{{Table3_Count5}}", report_data[25][6]);
+
+    // Table 4
+    body.replaceText("{{Table4_Host1}}", report_data[27][2]);
+    body.replaceText("{{Table4_Path1}}", report_data[27][4]);
+    body.replaceText("{{Table4_fileName1}}", report_data[27][6]);
+    body.replaceText("{{Table4_Count1}}", report_data[27][8]);
+    body.replaceText("{{Table4_Host2}}", report_data[28][2]);
+    body.replaceText("{{Table4_Path2}}", report_data[28][4]);
+    body.replaceText("{{Table4_fileName2}}", report_data[28][6]);
+    body.replaceText("{{Table4_Count2}}", report_data[28][8]);
+    body.replaceText("{{Table4_Host3}}", report_data[29][2]);
+    body.replaceText("{{Table4_Path3}}", report_data[29][4]);
+    body.replaceText("{{Table4_fileName3}}", report_data[29][6]);
+    body.replaceText("{{Table4_Count3}}", report_data[29][8]);
+    body.replaceText("{{Table4_Host4}}", report_data[30][2]);
+    body.replaceText("{{Table4_Path4}}", report_data[30][4]);
+    body.replaceText("{{Table4_fileName4}}", report_data[30][6]);
+    body.replaceText("{{Table4_Count4}}", report_data[30][8]);
+    body.replaceText("{{Table4_Host5}}", report_data[31][2]);
+    body.replaceText("{{Table4_Path5}}", report_data[31][4]);
+    body.replaceText("{{Table4_fileName5}}", report_data[31][6]);
+    body.replaceText("{{Table4_Count5}}", report_data[31][8]);
+
+    // Table 5
+    body.replaceText("{{Table5_Host1}}", report_data[33][2]);
+    body.replaceText("{{Table5_Count1}}", report_data[33][8]);
+    body.replaceText("{{Table5_Host2}}", report_data[34][2]);
+    body.replaceText("{{Table5_Count2}}", report_data[34][8]);
+    body.replaceText("{{Table5_Host3}}", report_data[35][2]);
+    body.replaceText("{{Table5_Count3}}", report_data[35][8]);
+    body.replaceText("{{Table5_Host4}}", report_data[36][2]);
+    body.replaceText("{{Table5_Count4}}", report_data[36][8]);
+    body.replaceText("{{Table5_Host5}}", report_data[37][2]);
+    body.replaceText("{{Table5_Count5}}", report_data[37][8]);
+
+    // Table 6
+    body.replaceText("{{Table6_Host1}}", report_data[39][2]);
+    body.replaceText("{{Table6_File_Name1}}", report_data[39][4]);
+    body.replaceText("{{Table6_Type1}}", report_data[39][6]);
+    body.replaceText("{{Table6_Count1}}", report_data[39][8]);
+    body.replaceText("{{Table6_Host2}}", report_data[40][2]);
+    body.replaceText("{{Table6_File_Name2}}", report_data[40][4]);
+    body.replaceText("{{Table6_Type2}}", report_data[40][6]);
+    body.replaceText("{{Table6_Count2}}", report_data[40][8]);
+    body.replaceText("{{Table6_Host3}}", report_data[41][2]);
+    body.replaceText("{{Table6_File_Name3}}", report_data[41][4]);
+    body.replaceText("{{Table6_Type3}}", report_data[41][6]);
+    body.replaceText("{{Table6_Count3}}", report_data[41][8]);
+    body.replaceText("{{Table6_Host4}}", report_data[42][2]);
+    body.replaceText("{{Table6_File_Name4}}", report_data[42][4]);
+    body.replaceText("{{Table6_Type4}}", report_data[42][6]);
+    body.replaceText("{{Table6_Count4}}", report_data[42][8]);
+    body.replaceText("{{Table6_Host5}}", report_data[43][2]);
+    body.replaceText("{{Table6_File_Name5}}", report_data[43][4]);
+    body.replaceText("{{Table6_Type5}}", report_data[43][6]);
+    body.replaceText("{{Table6_Count5}}", report_data[43][8]);
+
+    // Table 7
+    body.replaceText("{{Table7_Hash1}}", report_data[45][2]);
+    body.replaceText("{{Table7_Host1}}", report_data[45][4]);
+    body.replaceText("{{Table7_Script_Path1}}", report_data[45][6]);
+    body.replaceText("{{Table7_Count1}}", report_data[45][8]);
+    body.replaceText("{{Table7_Hash2}}", report_data[46][2]);
+    body.replaceText("{{Table7_Host2}}", report_data[46][4]);
+    body.replaceText("{{Table7_Script_Path2}}", report_data[46][6]);
+    body.replaceText("{{Table7_Count2}}", report_data[46][8]);
+    body.replaceText("{{Table7_Hash3}}", report_data[47][2]);
+    body.replaceText("{{Table7_Host3}}", report_data[47][4]);
+    body.replaceText("{{Table7_Script_Path3}}", report_data[47][6]);
+    body.replaceText("{{Table7_Count3}}", report_data[47][8]);
+    body.replaceText("{{Table7_Hash4}}", report_data[48][2]);
+    body.replaceText("{{Table7_Host4}}", report_data[48][4]);
+    body.replaceText("{{Table7_Script_Path4}}", report_data[48][6]);
+    body.replaceText("{{Table7_Count4}}", report_data[48][8]);
+    body.replaceText("{{Table7_Hash5}}", report_data[49][2]);
+    body.replaceText("{{Table7_Host5}}", report_data[49][4]);
+    body.replaceText("{{Table7_Script_Path5}}", report_data[49][6]);
+    body.replaceText("{{Table7_Count5}}", report_data[49][8]);
+
+    // URL Filtering Section
+    body.replaceText("{{Total_Allowed_URL}}", report_data[54][2]);
+    body.replaceText("{{Total_Blocked_URL}}", report_data[56][2]);
+
+    // Table 8
+    body.replaceText("{{Table8_Allowed_URL1}}", report_data[60][2]);
+    body.replaceText("{{Table8_Count1}}", report_data[60][4]);
+    body.replaceText("{{Table8_Allowed_URL2}}", report_data[61][2]);
+    body.replaceText("{{Table8_Count2}}", report_data[61][4]);
+    body.replaceText("{{Table8_Allowed_URL3}}", report_data[62][2]);
+    body.replaceText("{{Table8_Count3}}", report_data[62][4]);
+    body.replaceText("{{Table8_Allowed_URL4}}", report_data[63][2]);
+    body.replaceText("{{Table8_Count4}}", report_data[63][4]);
+    body.replaceText("{{Table8_Allowed_URL5}}", report_data[64][2]);
+    body.replaceText("{{Table8_Count5}}", report_data[64][4]);
+
+    // Table 9
+    body.replaceText("{{Table9_Blocked_URL1}}", report_data[66][2]);
+    body.replaceText("{{Table9_Count1}}", report_data[66][4]);
+    body.replaceText("{{Table9_Blocked_URL2}}", report_data[67][2]);
+    body.replaceText("{{Table9_Count2}}", report_data[67][4]);
+    body.replaceText("{{Table9_Blocked_URL3}}", report_data[68][2]);
+    body.replaceText("{{Table9_Count3}}", report_data[68][4]);
+    body.replaceText("{{Table9_Blocked_URL4}}", report_data[69][2]);
+    body.replaceText("{{Table9_Count4}}", report_data[69][4]);
+    body.replaceText("{{Table9_Blocked_URL5}}", report_data[70][2]);
+    body.replaceText("{{Table9_Count5}}", report_data[70][4]);
+
+    // Table 10
+    body.replaceText("{{Table_10_Source_1}}", report_data[77][2]);
+    body.replaceText("{{Table_10_Header_1}}", report_data[77][4]);
+    body.replaceText("{{Table_10_Subject_1}}", report_data[77][6]);
+    body.replaceText("{{Table_10_Count_1}}", report_data[77][8]);
+    body.replaceText("{{Table_10_Source_2}}", report_data[78][2]);
+    body.replaceText("{{Table_10_Header_2}}", report_data[78][4]);
+    body.replaceText("{{Table_10_Subject_2}}", report_data[78][6]);
+    body.replaceText("{{Table_10_Count_2}}", report_data[78][8]);
+    body.replaceText("{{Table_10_Source_3}}", report_data[79][2]);
+    body.replaceText("{{Table_10_Header_3}}", report_data[79][4]);
+    body.replaceText("{{Table_10_Subject_3}}", report_data[79][6]);
+    body.replaceText("{{Table_10_Count_3}}", report_data[79][8]);
+    body.replaceText("{{Table_10_Source_4}}", report_data[80][2]);
+    body.replaceText("{{Table_10_Header_4}}", report_data[80][4]);
+    body.replaceText("{{Table_10_Subject_4}}", report_data[80][6]);
+    body.replaceText("{{Table_10_Count_4}}", report_data[80][8]);
+    body.replaceText("{{Table_10_Source_5}}", report_data[81][2]);
+    body.replaceText("{{Table_10_Header_5}}", report_data[81][4]);
+    body.replaceText("{{Table_10_Subject_5}}", report_data[81][6]);
+    body.replaceText("{{Table_10_Count_5}}", report_data[81][8]);
+
+    // Table 11
+    body.replaceText("{{Table_11_Source_1}}", report_data[83][2]);
+    body.replaceText("{{Table_11_Header_1}}", report_data[83][4]);
+    body.replaceText("{{Table_11_Count_1}}", report_data[83][6]);
+    body.replaceText("{{Table_11_Source_2}}", report_data[84][2]);
+    body.replaceText("{{Table_11_Header_2}}", report_data[84][4]);
+    body.replaceText("{{Table_11_Count_2}}", report_data[84][6]);
+    body.replaceText("{{Table_11_Source_3}}", report_data[85][2]);
+    body.replaceText("{{Table_11_Header_3}}", report_data[85][4]);
+    body.replaceText("{{Table_11_Count_3}}", report_data[85][6]);
+    body.replaceText("{{Table_11_Source_4}}", report_data[86][2]);
+    body.replaceText("{{Table_11_Header_4}}", report_data[86][4]);
+    body.replaceText("{{Table_11_Count_4}}", report_data[86][6]);
+    body.replaceText("{{Table_11_Source_5}}", report_data[87][2]);
+    body.replaceText("{{Table_11_Header_5}}", report_data[87][4]);
+    body.replaceText("{{Table_11_Count_5}}", report_data[87][6]);
+
+    // Table 12
+    body.replaceText("{{Table_12_Source_1}}", report_data[89][2]);
+    body.replaceText("{{Table_12_Count_1}}", report_data[89][4]);
+    body.replaceText("{{Table_12_Source_2}}", report_data[90][2]);
+    body.replaceText("{{Table_12_Count_2}}", report_data[90][4]);
+    body.replaceText("{{Table_12_Source_3}}", report_data[91][2]);
+    body.replaceText("{{Table_12_Count_3}}", report_data[91][4]);
+    body.replaceText("{{Table_12_Source_4}}", report_data[92][2]);
+    body.replaceText("{{Table_12_Count_4}}", report_data[92][4]);
+    body.replaceText("{{Table_12_Source_5}}", report_data[93][2]);
+    body.replaceText("{{Table_12_Count_5}}", report_data[93][4]);
+
+    doc.saveAndClose();
+  }
+}

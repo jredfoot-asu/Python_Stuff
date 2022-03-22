@@ -1,0 +1,18 @@
+function deleteColumn() {
+  var client_folder = DriveApp.getFolderById(
+    "1CkOwPmUeb6VdiqZScCu45SP_QBXN1Z1w"
+  );
+  var month_report_folder = client_folder.getFolders().next().getId();
+  var individaul_client_folders = DriveApp.getFolderById(
+    month_report_folder
+  ).getFolders();
+  while (individaul_client_folders.hasNext()) {
+    var client_for_delete = individaul_client_folders.next().getId();
+    var report_for_delete = DriveApp.getFolderById(client_for_delete)
+      .getFiles()
+      .next()
+      .getId();
+    var delete_column = SpreadsheetApp.openById(report_for_delete);
+    delete_column.deleteColumn(1);
+  }
+}
