@@ -1,0 +1,9 @@
+python3.8.10
+pandas
+elasticsearch 7.14
+gspread (current version is fine)
+oath2client (current version is fine)
+googleapiclient (current version is fine)
+
+in google api console, Enable API Service: Google Sheets, Google Docs, Google Drive.
+OAUth client from google api console, download json and rename to client_secret.json

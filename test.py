@@ -21,7 +21,7 @@ import requests
 
 currentMonth = datetime.now().month
 currentYear = datetime.now().year
-organization_id = ['aaaao7', 'aaaak0', 'aaaam4', 'aaaar5', 'aaaai6', 'aaaak5']
+organization_id = ['aaaao7', 'aaaak0', 'aaaam4', 'aaaar5', 'aaaai6', 'aaaak5', 'aaaal0']
 
 report_month = 0
 report_year = 0
@@ -43,6 +43,7 @@ report_end = str(currentYear) + '-' + str(currentMonth) +'-01T05:00:00.000Z'
 client = Elasticsearch(
     "https://ccdralescn01.rocusnetworks.local:9200",
     verify_certs=False,
+    # Todo: change api key information
     api_key=("PT6BHH8BIH6T_vw3lV4a", "0Mvhf1IASZm2WI_3Oi5Kwg"),
     timeout=600,
 )
@@ -50,7 +51,7 @@ client = Elasticsearch(
 # url filtering function. Creates a spreadsheet with all the url filtering information on it.
 def blocked_url_filtering(firewall, organization):
     resp = client.search(index='haven*', body=firewall, size=5)
-
+    # Todo: change file path
     with open('./Elastic_API/' + organization + '_Blocked_URLs.csv', 'w', newline='') as b:
 
         blocked_alert_list = {}
@@ -82,7 +83,7 @@ def blocked_url_filtering(firewall, organization):
 
 def allowed_url_filtering(firewall, organization):
     resp = client.search(index='haven*', body=firewall, size=5)
-
+    # Todo: change file path
     with open('./Elastic_API/' + organization + '_Allowed_URLs.csv', 'w', newline='') as a:
 
         alert_list = {}
@@ -118,8 +119,9 @@ def total_url_filtering(firewall, organization):
     allowed_urls = 0
     blocked_urls = 0
     blocked_users = []
+    # Todo: change file path
     with open('./Elastic_API/' + organization + '_URL_totals.csv', 'w', newline='') as f:
-        blocked_columns = ['Total URLs', 'Total Blocked URLs', 'Total Allowed URLs', 'Count of Users (Blocked URLs)']
+        blocked_columns = ['Total URLs', 'Total Blocked URLs', 'Total Allowed URLs', 'Count of Users (Blocked URLs)', 'Organization Name']
         writer = csv.DictWriter(f, fieldnames=blocked_columns)
         writer.writeheader()
         for response in resp['aggregations']['action']['buckets']:
@@ -132,15 +134,23 @@ def total_url_filtering(firewall, organization):
                     if user['key'] not in blocked_users:
                         blocked_users.append(user['key'])
 
+        if resp['aggregations']['organization']['buckets'] == []:
+            pass
+        else:
+            for response in resp['aggregations']['organization']['buckets']:
+                organization_name = response['key']
+
         total_urls = {'Total URLs': allowed_urls + blocked_urls}
         total_blocked_urls = {'Total Blocked URLs': blocked_urls}
         total_allowed_urls = {'Total Allowed URLs': allowed_urls}
         users_blocked_urls = {'Count of Users (Blocked URLs)': len(blocked_users)}
+        organziationName = {'Organization Name': organization_name}
         
         alert_list.update(total_urls)
         alert_list.update(total_blocked_urls)
         alert_list.update(total_allowed_urls)
         alert_list.update(users_blocked_urls)
+        alert_list.update(organziationName)
 
         writer.writerow(alert_list)
     f.close()
@@ -150,6 +160,8 @@ def total_url_filtering(firewall, organization):
 def cylance_threats(cylance, organization):
     resp = client.search(index='haven*', body=cylance, size=0)
     # creating and opening the file for this definition.
+    
+    # Todo: change file paths
     with open('./Elastic_API/' + organization + '_Quarantined_Threats.csv', 'w', newline='') as q, open('./Elastic_API/' + organization + '_Allowed_Threats.csv', 'w', newline='') as a:
         quarantined_list = {}
         allowed_list = {}
@@ -209,7 +221,7 @@ def cylance_threats(cylance, organization):
 # pulls the cylance exploit attempts for the client and outputs to a csv.
 def cylance_exploits(cylance, organization):
     resp = client.search(index='haven*', body=cylance, size=0)
-
+    # Todo: change file paths
     with open('./Elastic_API/' + organization + '_Allowed_Cylance_Exploits.csv', 'w', newline='') as a, open('./Elastic_API/' + organization + '_Blocked_Cylance_Exploits.csv', 'w', newline='') as b:
         allowed_alert_list = {}
         columns = ['Device Name', 'Process Name', 'Violation Type', 'Event Action', 'Count']
@@ -270,6 +282,8 @@ def cylance_scripts(cylance, organization):
     resp = client.search(index='haven*', body=cylance, size=0)
 
     # creating and opening the file for this definition.
+    
+    # Todo: change file path
     with open('./Elastic_API/' + organization + '_Cylance_Scripts.csv', 'w', newline='') as f:
         alert_list = {}
         columns = ['Device Name', 'File Path', 'File Hash', 'Script Type', 'Event Action', 'Count']
@@ -309,6 +323,8 @@ def cylance_deviceControl(cylance, organization):
     resp = client.search(index='haven*', body=cylance, size=0)
 
     # creating and opening the file for this definition.
+    
+    # Todo: change file path
     with open('./Elastic_API/' + organization + '_Cylance_Device_Control.csv', 'w', newline='') as f:
         alert_list = {}
         columns = ['Device Name', 'USB Device Name', 'Device Serial Number', 'Event Action', 'Count']
@@ -344,7 +360,9 @@ def cylance_totals(cylance_total_devices, cylance_events, organization):
     total_devices = client.search(index='haven*', body=cylance_total_devices, size=0)
     total_events = client.search(index='haven*', body=cylance_events, size=0)
 
-        # creating and opening the file for this definition.
+    # creating and opening the file for this definition.
+        
+    # Todo: change file path
     with open('./Elastic_API/' + organization + '_Cylance_totals.csv', 'w', newline='') as f:
         alert_list = {}
         columns = ['Total Events', 'Total Devices', 'Threats', 'Total Exploit Attempts', 'Total Script Control Events', 'Total Device Control Events', 'Total Quarantined Events', 'Total Allowed Executables', 'Unique Device Count (Threats Quarantined)', 'Unique Device Count (Threats Allowed)', 'Unique Device Count (Device Control)', 'Unique Device Count (ScriptControl)', 'Unique Device Count (Exploit Control)', 'Organization Name']
@@ -392,8 +410,12 @@ def cylance_totals(cylance_total_devices, cylance_events, organization):
         for devices in total_devices['aggregations']['devices']['buckets']:
             device_count.append(device_count)
 
-        for org_name in total_events['aggregations']['organization_name']['buckets']:
-            client_name = org_name['key']
+        if total_events['aggregations']['organization_name']['buckets'] == []:
+            pass
+        else:
+            for org_name in total_events['aggregations']['organization_name']['buckets']:
+                client_name = org_name['key']
+                print(client_name)
 
         total_devices_count = {'Total Devices': len(device_count)}
         total_threats = {'Threats': sum(threats)}
@@ -429,9 +451,11 @@ def cylance_totals(cylance_total_devices, cylance_events, organization):
     return
 
 def mimecast(mimecast, organization):
-    resp = client.search(index='haven*', body=mimecast_query, size=0)
+    resp = client.search(index='mimecast*', body=mimecast, size=0)
 
     # creating and opening the file for this definition.
+    
+    # Todo: change file paths
     with open('./Elastic_API/' + organization + '_Mimecast_Header_Match.csv', 'w', newline='') as matched, open('./Elastic_API/' + organization + '_Mimecast_Header_No_Match.csv', 'w', newline='') as not_matched:
         matched_alert_list = {}
         not_matched_alert_list = {}
@@ -495,6 +519,8 @@ def mimecast(mimecast, organization):
 
 def mimecast_null_header(mimecast, organization):
     resp = client.search(index='mimecast*', body=mimecast, size=0)
+    
+    # Todo: change file path
     with open('./Elastic_API/' + organization + '_Mimecast_No_Header.csv', 'w', newline='') as no_header:
         alert_list = {}
         columns = ['destination_email', 'source_email', 'Count']
@@ -529,9 +555,11 @@ def mimecast_null_header(mimecast, organization):
     return
 
 def fill_sheet(organization):
+    # Todo: change file path
     input_file = pd.read_csv('./Elastic_API/Report_Data_Gathering.csv')
+    # Todo: change file path
     with open('./Elastic_API/' + organization + '_' + str(report_month) + '_' + str(report_year) + '_Report_Data.csv', 'w') as f:
-
+        # Todo: Change file paths
         cylanceTotals = pd.read_csv('./Elastic_API/' + organization + '_Cylance_totals.csv')
         cylanceDevices = pd.read_csv('./Elastic_API/' + organization + '_Cylance_Device_Control.csv')
         quarantinedThreats = pd.read_csv('./Elastic_API/' + organization + '_Quarantined_Threats.csv')
@@ -690,7 +718,7 @@ def fill_sheet(organization):
             input_file.iat[41,8] = str(cylanceScripts.iloc[3,5])
             input_file.iat[42,2] = str(cylanceScripts.iloc[4,0])
             input_file.iat[42,4] = str(cylanceScripts.iloc[4,1])
-            input_file.iat[42,6] = str(cylanceScripts.iloc[4,])
+            input_file.iat[42,6] = str(cylanceScripts.iloc[4,3])
             input_file.iat[42,8] = str(cylanceScripts.iloc[4,5])
 
         except IndexError:
@@ -823,11 +851,13 @@ def fill_sheet(organization):
         input_file.to_csv(f)
 
 def create_month_report_folder():
+    # Todo: change file path and make sure the google api secret file is named "client_secret.json"
     credentials = ServiceAccountCredentials.from_json_keyfile_name('./Elastic_API/client_secret.json')
     service = build('drive', 'v3', credentials=credentials)
     file_metadata = {
     'name': str(report_month) + '_' + str(report_year) + '_Reports',
     'mimeType': 'application/vnd.google-apps.folder',
+    # Todo: change parent folder to main folder you want the monthly report folder to be in.
     'parents': ['1CkOwPmUeb6VdiqZScCu45SP_QBXN1Z1w']
     }
     file = service.files().create(body=file_metadata, fields='id').execute()
@@ -841,6 +871,7 @@ def create_month_report_folder():
             return file_id
 
 def create_client_google_folder(organization, parents: list=None):
+    # Todo: change file path and make sure that the google api secret file is named "client_secret.json"
     credentials = ServiceAccountCredentials.from_json_keyfile_name('./Elastic_API/client_secret.json')
     service = build('drive', 'v3', credentials=credentials)
     file_metadata = {
@@ -859,9 +890,12 @@ def create_client_google_folder(organization, parents: list=None):
             return file_id
 
 def export_csv_file(organization, parents: list=None):
+    # Todo: change file path
     file_path = './Elastic_API/' + organization + '_' + str(report_month) + '_' + str(report_year) + '_Report_Data.csv'
+    # Todo: change file path and make sure the google client secret file is named "client_secret.json"
     credentials = ServiceAccountCredentials.from_json_keyfile_name('./Elastic_API/client_secret.json')
     service = build('drive', 'v3', credentials=credentials)
+    # Todo: change file path and make sure the google client secret file is named "client_secret.json"
     sa = gspread.service_account(filename='./Elastic_API/client_secret.json')
     if not os.path.exists(file_path):
         print(f"{file_path} not found.")
@@ -883,11 +917,13 @@ def export_csv_file(organization, parents: list=None):
         return
 
 def move_sheet_to_drive_folder(sheet_id, folder_id, organization):
+    # Todo: change file path and make sure that the google secret file is named "client_secret.json"
     sa = gspread.service_account(filename='./Elastic_API/client_secret.json')
     sa.copy(file_id=sheet_id, title=organization + '_' + str(report_month) + '_' + str(report_year) + '_Report_Data', folder_id=folder_id)
 
 if __name__ == "__main__":
 
+    # this starts a timer that will be output for the total time it took to run all the reports for the list of clients.
     start = time.perf_counter()
     for client_id in organization_id:
         # creating the body of the firewall request to only pull url_filtering events.
@@ -898,7 +934,8 @@ if __name__ == "__main__":
                 "must": 
                 [],
                     'filter': [
-                        {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                        {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                         {'match_phrase': {"organization.id": client_id}},
                         {'match_phrase': {'event.action': 'url_filtering'}},
                         {'match_phrase': {'observer.type': 'firewall'}},
@@ -950,7 +987,8 @@ if __name__ == "__main__":
                 "must": 
                 [],
                     'filter': [
-                        {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                        {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                         {'match_phrase': {"organization.id": client_id}},
                         {'match_phrase': {'event.action': 'url_filtering'}},
                         {'match_phrase': {'observer.type': 'firewall'}},
@@ -1002,7 +1040,8 @@ if __name__ == "__main__":
                 "must": 
                 [],
                     'filter': [
-                        {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                        {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                         {'match_phrase': {"organization.id": client_id}},
                         {'match_phrase': {'event.action': 'url_filtering'}},
                         {'match_phrase': {'observer.type': 'firewall'}},
@@ -1037,7 +1076,12 @@ if __name__ == "__main__":
                                 }, # closes terms for action under users
                             } # closes action under users
                         } # closes aggs for action under users
-                    }, # closes users       
+                    }, # closes users   
+                "organization": {
+                    "terms": {
+                        "field": 'organization.name'
+                    } #closes terms for organization
+                    } # closes organization
                 } # closes top level aggs
             }
 
@@ -1049,7 +1093,8 @@ if __name__ == "__main__":
                 "must": 
                 [],
                     'filter': [
-                        {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                        {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                         {'match_phrase': {"organization.id": client_id}},
                         {'match_phrase': {'event.module': 'CylancePROTECT'}},
                         # you can not do more than one cylance.event.type in a query as it breaks the query and always returns 0                
@@ -1099,7 +1144,8 @@ if __name__ == "__main__":
                 "must": 
                 [],
                     'filter': [
-                        {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                        {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                         {'match_phrase': {"organization.id": client_id}},
                         {'match_phrase': {'event.module': 'CylancePROTECT'}},
                         # you can not do more than one cylance.event.type in a query as it breaks the query and always returns 0
@@ -1149,7 +1195,8 @@ if __name__ == "__main__":
                 "must": 
                 [],
                     'filter': [
-                        {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                        {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                         {'match_phrase': {"organization.id": client_id}},
                         {'match_phrase': {'event.module': 'CylancePROTECT'}},
                         # you can not do more than one cylance.event.type in a query as it breaks the query and always returns 0
@@ -1205,7 +1252,8 @@ if __name__ == "__main__":
                 "must": 
                 [],
                     'filter': [
-                        {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                        {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                         {'match_phrase': {"organization.id": client_id}},
                         {'match_phrase': {'event.module': 'CylancePROTECT'}},
                         # you can not do more than one cylance.event.type in a query as it breaks the query and always returns 0
@@ -1255,7 +1303,8 @@ if __name__ == "__main__":
                 "must": 
                 [],
                     'filter': [
-                        {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                        {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                         {'match_phrase': {"organization.id": client_id}},
                         {'match_phrase': {'event.module': 'CylancePROTECT'}},
                         ]
@@ -1279,7 +1328,8 @@ if __name__ == "__main__":
                 "must": 
                 [],
                     'filter': [
-                        {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                        {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                         {'match_phrase': {"organization.id": client_id}},
                         {'match_phrase': {'event.module': 'CylancePROTECT'}},
                         ]
@@ -1347,7 +1397,8 @@ if __name__ == "__main__":
                 "bool": {
                     "must": [],
                         "filter": [
-                            {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                            {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                             {'match_phrase': {"organization.id.keyword": client_id}},
                             {'match_phrase': {'event.module': 'mimecast'}},
                             {'match_phrase': {'mimecast.event_type': 'receipt'}},
@@ -1402,7 +1453,8 @@ if __name__ == "__main__":
                 "bool": {
                     "must": [],
                         "filter": [
-                            {'range': {'@timestamp': {'gte': '2022-02-01T05:00:00.000Z', 'lte': '2022-03-01T05:00:00.000Z', "format": "strict_date_optional_time"}}},
+                        # Todo: change the time stamp. As it stands right now, a variable can not be in the path.
+                            {'range': {'@timestamp': {'gte': report_start, 'lte': report_end, "format": "date_optional_time"}}},
                             {'match_phrase': {"organization.id.keyword": client_id}},
                             {'match_phrase': {'event.module': 'mimecast'}},
                             {'match_phrase': {'mimecast.event_type': 'receipt'}},
@@ -1444,6 +1496,7 @@ if __name__ == "__main__":
             } # closes aggs for destination_email
         }
 
+        # creating the threads for each of the queries to be called.
         blocked_url = threading.Thread(target=blocked_url_filtering, args=[blocked_firewall_query, client_id])
         allowed_url = threading.Thread(target=allowed_url_filtering , args=[allowed_firewall_query, client_id])
         total_url = threading.Thread(target=total_url_filtering , args=[firewall_totals_query, client_id])
@@ -1455,6 +1508,7 @@ if __name__ == "__main__":
         mimecastHeaders = threading.Thread(target=mimecast , args=[mimecast_query, client_id])
         mimecastNoHeaders = threading.Thread(target=mimecast_null_header , args=[mimecast_null_header_query, client_id])
 
+        # starting each thread to run congruently.
         blocked_url.start()
         allowed_url.start()
         total_url.start()
@@ -1466,6 +1520,7 @@ if __name__ == "__main__":
         mimecastHeaders.start()
         mimecastNoHeaders.start()
 
+        # joining the threads to the active process so that they may run congruently.
         blocked_url.join()
         allowed_url.join()
         total_url.join()
@@ -1477,10 +1532,10 @@ if __name__ == "__main__":
         mimecastHeaders.join()
         mimecastNoHeaders.join()
 
-        # finish = time.perf_counter()
-        # print(f'Finished in {round(finish-start), 2} seconds')
+        # Filling in the sheet based of the csv's that were pulled in the above threading action
         fill_sheet(client_id)
-
+        # Todo: Change file paths
+        #removing the csv's for each individual aggregation pull now that the report csv has been created.
         folder = './Elastic_API/'
         files = [client_id + '_Allowed_Cylance_Exploits.csv', 
             client_id + '_Allowed_Threats.csv', 
@@ -1503,12 +1558,14 @@ if __name__ == "__main__":
             except FileNotFoundError:
                 pass
 
-    
+    # create the current month folder for the reports that are being run.
     month_folder = str(create_month_report_folder())
+    # iterating over the clients in the list of clients to create their own folders and upload the report csv to that folder.
     for client in organization_id:
         folder_id = str(create_client_google_folder(client, month_folder))
         sheet_id = str(export_csv_file(client, folder_id))
         move_sheet_to_drive_folder(sheet_id, folder_id, client)
 
+    # this will output the total time it took to complete all the above tasks.
     finish = time.perf_counter()
     print(f'Finished in {round(finish-start), 2} seconds')
